@@ -24,7 +24,7 @@ If you would rather build it yourself, then first edit the TA source code to pri
 
 Before you build the TA, you also have to change the private key the TA gets signed with. To do that, go to the optee_os directory at `your_optee_build_dir/optee_os/keys/`. Here move the existing `.pem` file somewhere else (or delete it if you know you won't need it) and generate a new RSA 2048 bit key called default_ta.pem (`openssl genrsa -out default_ta.pem 2048`).
 
-Now, in your optee_os directory, follow the (OP-TEE tutorial)[https://optee.readthedocs.io/en/latest/building/gits/optee_os.html#build-instructions] to rebuild the OP-TEE OS. Be sure to configure the make command correctly, I used:
+Now, in your optee_os directory, follow the [OP-TEE tutorial](https://optee.readthedocs.io/en/latest/building/gits/optee_os.html#build-instructions) to rebuild the OP-TEE OS. Be sure to configure the make command correctly, I used:
 
 `make     CFG_ARM64_core=y     CFG_TEE_BENCHMARK=n     CFG_TEE_CORE_LOG_LEVEL=3     CROSS_COMPILE=aarch64-linux-gnu-     CROSS_COMPILE_core=aarch64-linux-gnu-     CROSS_COMPILE_ta_arm32=arm-linux-gnueabihf-     CROSS_COMPILE_ta_arm64=aarch64-linux-gnu-     O=out/arm     PLATFORM=rpi3`
 
