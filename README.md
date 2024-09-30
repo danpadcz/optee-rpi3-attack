@@ -10,6 +10,10 @@ You can either use the `optee.zip` file that I provide for you at [my Google Dri
 
 There are a few catches to building it yourself. For easy building, follow the tutorial at the [OP-TEE documentation](https://optee.readthedocs.io/en/latest/building/gits/build.html#get-and-build-the-solution). Though when selecting a manifest, choose the version 3.13.0. Similarly, you should build OP-TEE on a fresh Ubuntu 20.04 LTS system, since this version should not crash when compiling.
 
+### After building
+
+Continue following the tutorial on the [RPI3 part of the OP-TEE documentation](https://optee.readthedocs.io/en/latest/building/devices/rpi3.html#build-instructions) to load OP-TEE onto the RPI3.
+
 ## Step 2 - replace the hello_world TA with the attacking TA
 
 Now that we have OP-TEE running on the RPI3, we can replace the hello world trusted application (`8aaaf200-2450-11e4-abe2-0002a5d5c51b.ta`) with our attacking TA.
