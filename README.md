@@ -1,3 +1,4 @@
+# TODO update for op-tee 4.3.0
 # How to replicate the attack from the "[Attacking TrustZone](https://link.springer.com/article/10.1007/s11416-021-00413-y)" paper
 
 ## Step 1 - Build OP-TEE and run it on the Raspberry Pi 3 Model B+

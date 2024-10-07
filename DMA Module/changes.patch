@@ -1,0 +1,233 @@
+diff --git a/Makefile b/Makefile
+deleted file mode 100644
+index f62b277..0000000
+--- a/Makefile
++++ /dev/null
+@@ -1,10 +0,0 @@
+-make:
+-	cd page_writer && $(MAKE)
+-	cd page_reader && $(MAKE)
+-	cd one_writer && $(MAKE)
+-
+-clean:
+-	cd page_writer && $(MAKE) clean
+-	cd page_reader && $(MAKE) clean
+-	cd one_writer && $(MAKE) clean
+-
+diff --git a/dma_helper.h b/dma_helper.h
+index 8dd1d33..0972260 100644
+--- a/dma_helper.h
++++ b/dma_helper.h
+@@ -7,7 +7,7 @@
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+ 
+-#include <asm/segment.h>
++//#include <asm/segment.h>
+ #include <asm/uaccess.h>
+ #include <linux/buffer_head.h>
+ 
+@@ -33,36 +33,33 @@
+ struct file *file_open(const char *path, int flags, int rights) 
+ {
+     struct file *filp = NULL;
+-    mm_segment_t oldfs;
+     int err = 0;
+ 
+-    oldfs = get_fs();
+-    set_fs(get_ds());
+     filp = filp_open(path, flags, rights);
+-    set_fs(oldfs);
+     if (IS_ERR(filp)) {
+         err = PTR_ERR(filp);
++        pr_err("Error opening file %s: %d\n", path, err);
+         return NULL;
+     }
+     return filp;
+ }
+ 
++
+ void file_close(struct file *file) 
+ {
+     filp_close(file, NULL);
+ }
+ 
+-int file_write(struct file *file, unsigned long long offset, unsigned char *data, unsigned int size) 
++ssize_t file_write(struct file *file, loff_t offset, const unsigned char *data, size_t size)
+ {
+-    mm_segment_t oldfs;
+-    int ret;
+-
+-    oldfs = get_fs();
+-    set_fs(get_ds());
++    ssize_t ret;
+ 
+     ret = kernel_write(file, data, size, &offset);
+ 
+-    set_fs(oldfs);
++    if (ret < 0) {
++        pr_err("Error writing to file: %zd\n", ret);
++    }
++
+     return ret;
+ }
+ 
+@@ -162,7 +159,7 @@ int dma_tx(volatile struct DmaChannelHeader* dmaHeader, void* physSrcPage, void*
+ 	// memset((void*)dmaHeader, 0, sizeof(struct DmaChannelHeader));
+ 	dmaHeader->CS = DMA_CS_RESET;	//make sure to disable dma first.
+ 	dmaHeader->CS = DMA_CS_PAUSED;
+-	mdelay(2000);
++	mdelay(1500);
+ 
+ 	virtCbPage = (void*)__get_dma_pages(GFP_ATOMIC, 0);
+ 	memset(virtCbPage, 0, 4096);
+@@ -205,7 +202,7 @@ int dma_tx(volatile struct DmaChannelHeader* dmaHeader, void* physSrcPage, void*
+ 	printk("CURRENT DEST_ADDR: %x\n", dmaHeader->DEST_AD);
+ 	printk("DMA STATUS REGISTER (After CB Before Active) %x\n", dmaHeader->CS);
+ 	dmaHeader->CS = DMA_CS_ACTIVE;	//set active bit, but everything else is 0.
+-	mdelay(9000);
++	mdelay(5000);
+ 
+ 	printk("DMA STATUS REGISTER (AFTER Tx) %x\n", dmaHeader->CS);
+ 	printk("TI STATUS AFTER: %x\n", cb1->TI);
+@@ -219,4 +216,4 @@ int dma_tx(volatile struct DmaChannelHeader* dmaHeader, void* physSrcPage, void*
+ 	mdelay(500);
+ 	// ret = 0;
+ 	return ret;
+-}
+\ No newline at end of file
++}
+diff --git a/one_writer/Makefile b/one_writer/Makefile
+index 9d8d5d1..fb395fa 100644
+--- a/one_writer/Makefile
++++ b/one_writer/Makefile
+@@ -1,22 +1,5 @@
+-TARGET= dma_writer
+-OBJS  = dma-writer.o
+-CC=/home/ron/projects/optee-project/toolchains/aarch64/bin/aarch64-linux-gnu-gcc
++obj-m += dma-writer.o
+ 
+ 
+-LD=/home/ron/projects/optee-project/toolchains/aarch64/bin/aarch64-linux-gnu-ld
+-CURRENT=`uname -r`
+-KDIR = /home/ron/projects/optee-project/linux/
+-PWD = $(shell pwd) 
+-CFLAGS_MODULE +=-mcmodel=large -mpc-relative-literal-loads
+-obj-m      := $(TARGET).o
+-$(TARGET)-objs   := $(OBJS)
+-
+-default:
+-	make ARCH=arm64 -C $(KDIR) SUBDIRS=$(PWD) modules
+-
+-$(TARGET).o: $(OBJS)
+-	$(LD) $(LD_RFLAG) -r -o $@ $(OBJS)
+-clean:
+-	-rm -f *.o .*.o.cmd .*.ko.cmd *.[ch]~ Modules.symvers *.order *.*.ko *.ko *.mod.c .*.c  Module.symvers
+-indent:
+-	indent -kr -i8 *.[ch]
++all:
++	make -C /home/exists/Bakalarka/building_optee/linux M=$(PWD) ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- modules
+diff --git a/one_writer/dma-writer.c b/one_writer/dma-writer.c
+index a2dccf6..1aaae44 100644
+--- a/one_writer/dma-writer.c
++++ b/one_writer/dma-writer.c
+@@ -8,7 +8,7 @@
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+ 
+-#include <asm/segment.h>
++//#include <asm/segment.h>
+ #include <asm/uaccess.h>
+ #include <linux/buffer_head.h>
+ #include "../dma_helper.h"
+@@ -38,7 +38,7 @@ static int __init dma_reader_init(void)
+ 
+ 	int dmaChNum = 6;
+ 
+-	start = (void*) ioremap_nocache(dma_start, 4096);
++	start = (void*) ioremap(dma_start, 4096);
+ 
+ 	virtDstPage = (char*)__get_dma_pages(GFP_ATOMIC, 0);
+ 	
+diff --git a/page_reader/Makefile b/page_reader/Makefile
+index d6bb0d1..3e5995a 100644
+--- a/page_reader/Makefile
++++ b/page_reader/Makefile
+@@ -1,22 +1,5 @@
+-TARGET= dma_reader
+-OBJS  = dma-reader.o
+-CC=/home/ron/projects/optee-project/toolchains/aarch64/bin/aarch64-linux-gnu-gcc
++obj-m += dma-reader.o
+ 
+ 
+-LD=/home/ron/projects/optee-project/toolchains/aarch64/bin/aarch64-linux-gnu-ld
+-CURRENT=`uname -r`
+-KDIR = /home/ron/projects/optee-project/linux/
+-PWD = $(shell pwd) 
+-CFLAGS_MODULE +=-mcmodel=large -mpc-relative-literal-loads
+-obj-m      := $(TARGET).o
+-$(TARGET)-objs   := $(OBJS)
+-
+-default:
+-	make ARCH=arm64 -C $(KDIR) SUBDIRS=$(PWD) modules
+-
+-$(TARGET).o: $(OBJS)
+-	$(LD) $(LD_RFLAG) -r -o $@ $(OBJS)
+-clean:
+-	-rm -f *.o .*.o.cmd .*.ko.cmd *.[ch]~ Modules.symvers *.order *.*.ko *.ko *.mod.c .*.c  Module.symvers
+-indent:
+-	indent -kr -i8 *.[ch]
++all:
++	make -C /home/exists/Bakalarka/building_optee/linux M=$(PWD) ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- modules
+diff --git a/page_reader/dma-reader.c b/page_reader/dma-reader.c
+index 7a6e635..dc17afb 100644
+--- a/page_reader/dma-reader.c
++++ b/page_reader/dma-reader.c
+@@ -8,7 +8,7 @@
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+ 
+-#include <asm/segment.h>
++//#include <asm/segment.h>
+ #include <asm/uaccess.h>
+ #include <linux/buffer_head.h>
+ #include "../dma_helper.h"
+@@ -33,7 +33,7 @@ static int __init dma_reader_init(void)
+ 
+ 	int dmaChNum = 7;
+ 
+-	start = (void*) ioremap_nocache(dma_start, 4096);
++	start = (void*) ioremap(dma_start, 4096);
+ 
+ 	virtDstPage = (char*)__get_dma_pages(GFP_ATOMIC, 0);
+ 	
+diff --git a/page_writer/Makefile b/page_writer/Makefile
+index 9d8d5d1..0ae5ce6 100644
+--- a/page_writer/Makefile
++++ b/page_writer/Makefile
+@@ -1,22 +1,5 @@
+-TARGET= dma_writer
+-OBJS  = dma-writer.o
+-CC=/home/ron/projects/optee-project/toolchains/aarch64/bin/aarch64-linux-gnu-gcc
++obj-m += dma-writer.o
+ 
+ 
+-LD=/home/ron/projects/optee-project/toolchains/aarch64/bin/aarch64-linux-gnu-ld
+-CURRENT=`uname -r`
+-KDIR = /home/ron/projects/optee-project/linux/
+-PWD = $(shell pwd) 
+-CFLAGS_MODULE +=-mcmodel=large -mpc-relative-literal-loads
+-obj-m      := $(TARGET).o
+-$(TARGET)-objs   := $(OBJS)
+-
+-default:
+-	make ARCH=arm64 -C $(KDIR) SUBDIRS=$(PWD) modules
+-
+-$(TARGET).o: $(OBJS)
+-	$(LD) $(LD_RFLAG) -r -o $@ $(OBJS)
+-clean:
+-	-rm -f *.o .*.o.cmd .*.ko.cmd *.[ch]~ Modules.symvers *.order *.*.ko *.ko *.mod.c .*.c  Module.symvers
+-indent:
+-	indent -kr -i8 *.[ch]
++all:
++	make -C /home/exists/Bakalarka/building_optee/optee-rpi-3.12.0/linux M=$(PWD) ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- modules
