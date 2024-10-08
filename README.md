@@ -12,7 +12,8 @@ There are a few catches to building it yourself. For easy building, follow the t
 
 ### After building
 
-Continue following the tutorial on the [RPI3 part of the OP-TEE documentation](https://optee.readthedocs.io/en/latest/building/devices/rpi3.html#build-instructions) to load OP-TEE onto the RPI3.
+Run `make img-help` in the `your_optee_build_dir/build` directory and follow the steps in the output of the command to flash your SD card.
+For more info use the [RPI3 part of the OP-TEE documentation](https://optee.readthedocs.io/en/latest/building/devices/rpi3.html#build-instructions).
 
 ## Step 2 - replace the hello_world TA with the attacking TA
 
@@ -24,15 +25,17 @@ Once again if you prefer, the pre-build TA is in this repo at `Changed TA/8aaaf2
 
 ### Build it yourself 
 
-If you would rather build it yourself, then first edit the TA source code to print any string you prefer. You'll find the TA source code at `your_optee_build_dir/optee_examples/hello_world/ta/hello_world_ta.c`. 
-
 Before you build the TA, you also have to change the private key the TA gets signed with. To do that, go to the optee_os directory at `your_optee_build_dir/optee_os/keys/`. Here move the existing `.pem` file somewhere else (or delete it if you know you won't need it) and generate a new RSA 2048 bit key called default_ta.pem (`openssl genrsa -out default_ta.pem 2048`).
 
-Now, in your optee_os directory, follow the [OP-TEE tutorial](https://optee.readthedocs.io/en/latest/building/gits/optee_os.html#build-instructions) to rebuild the OP-TEE OS. Be sure to configure the make command correctly, I used:
+Now, go to the directory `your_optee_build_dir/optee_os/` and rebuild the OP-TEE os using the command:
 
-`make     CFG_ARM64_core=y     CFG_TEE_BENCHMARK=n     CFG_TEE_CORE_LOG_LEVEL=3     CROSS_COMPILE=aarch64-linux-gnu-     CROSS_COMPILE_core=aarch64-linux-gnu-     CROSS_COMPILE_ta_arm32=arm-linux-gnueabihf-     CROSS_COMPILE_ta_arm64=aarch64-linux-gnu-     O=out/arm     PLATFORM=rpi3`
+```
+make     CFG_ARM64_core=y     CFG_TEE_BENCHMARK=n     CFG_TEE_CORE_LOG_LEVEL=3     CROSS_COMPILE=aarch64-linux-gnu-     CROSS_COMPILE_core=aarch64-linux-gnu-     CROSS_COMPILE_ta_arm32=arm-linux-gnueabihf-     CROSS_COMPILE_ta_arm64=aarch64-linux-gnu-     O=out/arm     PLATFORM=rpi3
+```
+Note: you might have to put into your path the `aarch64-linux-gnu-` and `arm-linux-gnueabihf-` toolkits, you'll find the bin directories at `your_optee_build_dir/toolchains/aarch32/bin/` and `your_optee_build_dir/toolchains/aarch64/bin/`.
 
-Lastly, to build the new TA, use this make command:
+Lastly, you have to edit the TA source code to print any string you prefer. You'll find the TA source code at `your_optee_build_dir/optee_examples/hello_world/ta/hello_world_ta.c` and then in this file you'll edit the "Hello World!" string. 
+Then use this make command to build the TA:
 
 `make CROSS_COMPILE=aarch64-linux-gnu- PLATFORM=rpi3 TA_DEV_KIT_DIR=/path/to/your_optee_build_dir/optee_os/out/arm/export-ta_arm64/`
 
@@ -50,7 +53,7 @@ Once again, the kernel module and script to use it is available as a pre-built m
 
 ### Build it yourself 
 
-Clone the [DMA repo](https://github.com/ronst22/dma_repo.git). You really only need the one_writer directory, so enter that and then change the makefile to the makefile in the `DMA Module/Makefile` directory in this repo and edit the path to the linux directory in your OP-TEE build directory. Then run make in the one_writer directory on your Ubuntu 20.04 LTS system.
+Clone the [DMA repo](https://github.com/ronst22/dma_repo.git). You really only need the one_writer directory, so enter that and then change the makefile to the makefile in the `DMA Module/Makefile` directory in this repo and edit the path to the linux directory in your OP-TEE build directory. Then run `make` in the one_writer directory on your Ubuntu 20.04 LTS system.
 
 ### After building the module
 
