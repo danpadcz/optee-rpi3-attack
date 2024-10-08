@@ -6,7 +6,7 @@ This is a tutorial for OP-TEE 4.3.0, which at the time of writing this README is
 
 ### Pre-built
 
-Use the rpi3-sdcard.img that is in this git to flash OP-TEE on your Raspberry Pi. 
+Use the rpi3-sdcard.img that on my [Google Drive](https://drive.google.com/file/d/1mFTzD9n8PTGCKyWPlkeIKQLPciuQbTHl/view?usp=sharing) to flash OP-TEE on your Raspberry Pi. 
 
 ### Build it yourself
 
