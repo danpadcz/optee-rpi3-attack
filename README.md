@@ -21,7 +21,7 @@ Now that we have OP-TEE running on the RPI3, we can replace the hello world trus
 
 ### Pre-built
 
-Once again if you prefer, the pre-build TA is in this repo at `Changed TA/8aaaf200-2450-11e4-abe2-0002a5d5c51b.ta`.
+Once again if you prefer, the pre-built TA is in this repo at `Changed TA/8aaaf200-2450-11e4-abe2-0002a5d5c51b.ta`.
 
 ### Build it yourself 
 
@@ -32,7 +32,7 @@ Now, go to the directory `your_optee_build_dir/optee_os/` and rebuild the OP-TEE
 ```
 make     CFG_ARM64_core=y     CFG_TEE_BENCHMARK=n     CFG_TEE_CORE_LOG_LEVEL=3     CROSS_COMPILE=aarch64-linux-gnu-     CROSS_COMPILE_core=aarch64-linux-gnu-     CROSS_COMPILE_ta_arm32=arm-linux-gnueabihf-     CROSS_COMPILE_ta_arm64=aarch64-linux-gnu-     O=out/arm     PLATFORM=rpi3
 ```
-Note: you might have to put into your path the `aarch64-linux-gnu-` and `arm-linux-gnueabihf-` toolkits, you'll find the bin directories at `your_optee_build_dir/toolchains/aarch32/bin/` and `your_optee_build_dir/toolchains/aarch64/bin/`.
+Note: you probably will have to put into your path the `aarch64-linux-gnu-` and `arm-linux-gnueabihf-` toolkits, you'll find the bin directories at `your_optee_build_dir/toolchains/aarch32/bin/` and `your_optee_build_dir/toolchains/aarch64/bin/`.
 
 Lastly, you have to edit the TA source code to print any string you prefer. You'll find the TA source code at `your_optee_build_dir/optee_examples/hello_world/ta/hello_world_ta.c` and then in this file you'll edit the "Hello World!" string. 
 Then use this make command to build the TA:
@@ -53,7 +53,7 @@ Once again, the kernel module and script to use it is available as a pre-built m
 
 ### Build it yourself 
 
-Clone the [DMA repo](https://github.com/ronst22/dma_repo.git). You really only need the one_writer directory, so enter that and then change the makefile to the makefile in the `DMA Module/Makefile` directory in this repo and edit the path to the linux directory in your OP-TEE build directory. Then run `make` in the one_writer directory on your Ubuntu 20.04 LTS system.
+Clone the [DMA repo](https://github.com/ronst22/dma_repo.git). You really only need the one_writer directory, so enter that and then change the makefile to the makefile in the `DMA Module/Makefile` directory in this repo and in the makefile edit the path to the linux directory in your OP-TEE build directory - that is `your_optee_build_dir/linux`. Then run `make` in the one_writer directory on your Ubuntu 20.04 LTS system.
 
 ### After building the module
 
@@ -61,7 +61,7 @@ Copy the built `dma-writer.ko` file to your RPI3.
 
 ## Step 4 - do the attack
 
-Copy the `attack_optee.sh` from this repo to your RPI3. Then on your RPI3, from the directory with the DMA kernel modules, run the `attack_optee.sh` script.
+Copy the `attack_optee.sh` from this repo to your RPI3. Then on your RPI3, from the directory with the DMA kernel module, run the `attack_optee.sh` script.
 Then simply call `optee_example_hello_world` and you'll hopefully see the new output string you determined when building the TA! If you used the pre-built option, you'll see "Attack succeeded!".
 
 A common issue is that the kernel panics instead of running the attack. Simply reboot the Raspberry and re-do step 4 again. This should be enough to fix the panic.
