@@ -25,7 +25,7 @@ Now that we have OP-TEE running on the RPI3, we can replace the hello world trus
 
 ### Pre-built
 
-Once again if you prefer, the pre-build TA is in this repo at `Changed TA/8aaaf200-2450-11e4-abe2-0002a5d5c51b.ta`.
+Once again if you prefer, the pre-built TA is in this repo at `Changed TA/8aaaf200-2450-11e4-abe2-0002a5d5c51b.ta`.
 
 ### Build it yourself 
 
