@@ -34,6 +34,11 @@ make     CFG_ARM64_core=y     CFG_TEE_BENCHMARK=n     CFG_TEE_CORE_LOG_LEVEL=3  
 ```
 Note: you probably will have to put into your path the `aarch64-linux-gnu-` and `arm-linux-gnueabihf-` toolkits, you'll find the bin directories at `your_optee_build_dir/toolchains/aarch32/bin/` and `your_optee_build_dir/toolchains/aarch64/bin/`.
 
+Note 2: If you cannot build OP-TEE OS with the following error, apply the patch in `Changed TA\optee_os.patch`.
+```
+aarch64-linux-gnu-ld.bfd: warning: out/arm/core/tee.elf has a LOAD segment with RWX permissions
+```
+
 Lastly, you have to edit the TA source code to print any string you prefer. You'll find the TA source code at `your_optee_build_dir/optee_examples/hello_world/ta/hello_world_ta.c` and then in this file you'll edit the "Hello World!" string. 
 Then use this make command to build the TA:
 
@@ -65,3 +70,5 @@ Copy the `attack_optee.sh` from this repo to your RPI3. Then on your RPI3, from 
 Then simply call `optee_example_hello_world` and you'll hopefully see the new output string you determined when building the TA! If you used the pre-built option, you'll see "Attack succeeded!".
 
 A common issue is that the kernel panics instead of running the attack. Simply reboot the Raspberry and re-do step 4 again. This should be enough to fix the panic.
+
+If the issue persists, run the `xtest` test suite on the OP-TEE system. If there are some failing tests, please try doing a new and clean build of OP-TEE.
