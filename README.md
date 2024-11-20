@@ -8,7 +8,7 @@ You can either use the `optee.zip` file that I provide for you at [my Google Dri
 
 ### Build it yourself
 
-There are a few catches to building it yourself. For easy building, follow the tutorial at the [OP-TEE documentation](https://optee.readthedocs.io/en/latest/building/gits/build.html#get-and-build-the-solution). Though when selecting a manifest, choose the version 3.13.0. Similarly, you should build OP-TEE on a fresh Ubuntu 20.04 LTS system, since this version should not crash when compiling.
+There are a few catches to building it yourself. For easy building, follow the tutorial at the [OP-TEE documentation](https://optee.readthedocs.io/en/latest/building/gits/build.html#get-and-build-the-solution). Though when selecting a manifest, choose the version 3.12.0. Similarly, you should build OP-TEE on a fresh Ubuntu 20.04 LTS system, since this version should not crash when compiling.
 
 ### After building
 
