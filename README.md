@@ -1,5 +1,8 @@
 # How to replicate the attack from the "[Attacking TrustZone](https://link.springer.com/article/10.1007/s11416-021-00413-y)" paper
 
+This is a tutorial for replicating the attack from [this paper](https://link.springer.com/article/10.1007/s11416-021-00413-y) in OP-TEE 3.12.0.
+
+
 ## Step 1 - Build OP-TEE and run it on the Raspberry Pi 3 Model B+
 
 ### Pre-built
