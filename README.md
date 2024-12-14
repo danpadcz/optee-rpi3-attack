@@ -1,21 +1,27 @@
 # How to replicate the attack from the "[Attacking TrustZone](https://link.springer.com/article/10.1007/s11416-021-00413-y)" paper
 
-This is a tutorial for OP-TEE 4.3.0, which at the time of writing this README is the latest release version of OP-TEE.
+This is a tutorial for replicating the attack from [this paper](https://link.springer.com/article/10.1007/s11416-021-00413-y) in OP-TEE 4.3.0.
 
 ## Step 1 - Build OP-TEE and run it on the Raspberry Pi 3 Model B+
 
 ### Pre-built
 
-Use the rpi3-sdcard.img that on my [Google Drive](https://drive.google.com/file/d/1mFTzD9n8PTGCKyWPlkeIKQLPciuQbTHl/view?usp=sharing) to flash OP-TEE on your Raspberry Pi. 
+Use the `rpi3-sdcard.img` image available on my [Google Drive](https://drive.google.com/file/d/1mFTzD9n8PTGCKyWPlkeIKQLPciuQbTHl/view?usp=sharing) to load OP-TEE on your Raspberry Pi. 
 
 ### Build it yourself
 
 For easy building, follow the tutorial at the [OP-TEE documentation](https://optee.readthedocs.io/en/latest/building/gits/build.html#get-and-build-the-solution).
 When selecting a manifest, choose the version 4.3.0. Compared to the 3.13.0 version, this version doesn't need to be built in a VM. If you do choose to do so, I used a fully updated Pop!\_OS 22.04 LTS release.
 
-### After building
+### After getting the .img file
 
-To flash OP-TEE on the RPI use the command `sudo dd if=/path/to/this/git/repo/rpi3-sdcard.img of=/dev/<name-of-my-sd-card> bs=1024k conv=fsync status=progress`.
+To load the image on your SD card, first, you have to find which device your SD card is loaded as using the `lsblk` command. In the output of the command, you will usually find your SD card by looking for the mountpoint of your SD card. 
+
+After you've identified the name of the device your SD card is loaded into, you can load OP-TEE on your SD card using the command below (replace the name paths for the `if` and `of` parameters). If you built OP-TEE yourself, running `make img-help` will give you the same command, but with the path to your image file already in the command.
+
+```
+sudo dd if=<path-to-your-rpi-sdcard.img-file>/rpi3-sdcard.img of=/dev/<name-of-your-sd-card> bs=1024k conv=fsync status=progress
+```
 
 For more info use the [RPI3 part of the OP-TEE documentation](https://optee.readthedocs.io/en/latest/building/devices/rpi3.html#build-instructions).
 
@@ -57,7 +63,7 @@ Once again, the kernel module and script to use it is available as a pre-built m
 
 Clone the [DMA repo](https://github.com/ronst22/dma_repo.git) and apply the `changes.patch` file in the `DMA Module/` directory. Since you really only need the one_writer module, enter its directory and then in the `Makefile` change the path in the make command to `your_optee_build_dir/linux`. Then run the command `make` in the one_writer directory.
 
-### After building the module
+### After getting the module
 
 Copy the built `dma-writer.ko` file to your RPI3.
 
