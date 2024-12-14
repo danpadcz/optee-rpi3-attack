@@ -10,9 +10,12 @@ You can either use the `optee.zip` file that I provide for you at [my Google Dri
 
 There are a few catches to building it yourself. For easy building, follow the tutorial at the [OP-TEE documentation](https://optee.readthedocs.io/en/latest/building/gits/build.html#get-and-build-the-solution). Though when selecting a manifest, choose the version 3.12.0. Similarly, you should build OP-TEE on a fresh Ubuntu 20.04 LTS system, since this version should not crash when compiling.
 
-### After building
+### After downloading or building the OP-TEE directory yourself
 
 Run `make img-help` in the `your_optee_build_dir/build` directory and follow the steps in the output of the command to flash your SD card.
+
+To find out which device your SD card is loaded as, you can use the `lsblk` command. In the output of the command, you will usually find your SD card by looking for the mountpoint of your SD card.
+
 For more info use the [RPI3 part of the OP-TEE documentation](https://optee.readthedocs.io/en/latest/building/devices/rpi3.html#build-instructions).
 
 ## Step 2 - replace the hello_world TA with the attacking TA
@@ -60,7 +63,7 @@ Once again, the kernel module and script to use it is available as a pre-built m
 
 Clone the [DMA repo](https://github.com/ronst22/dma_repo.git). You really only need the one_writer directory, so enter that and then change the makefile to the makefile in the `DMA Module/Makefile` directory in this repo and in the makefile edit the path to the linux directory in your OP-TEE build directory - that is `your_optee_build_dir/linux`. Then run `make` in the one_writer directory on your Ubuntu 20.04 LTS system.
 
-### After building the module
+### After you get the `dma-writer.ko` module file
 
 Copy the built `dma-writer.ko` file to your RPI3.
 
