@@ -63,7 +63,7 @@ Once again, the kernel module and script to use it is available as a pre-built m
 
 Clone the [DMA repo](https://github.com/ronst22/dma_repo.git) and apply the `changes.patch` file in the `DMA Module/` directory. Since you really only need the one_writer module, enter its directory and then in the `Makefile` change the path in the make command to `your_optee_build_dir/linux`. Then run the command `make` in the one_writer directory.
 
-### After getting the module
+### After you get the `dma-writer.ko` module file
 
 Copy the built `dma-writer.ko` file to your RPI3.
 
